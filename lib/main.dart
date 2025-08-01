@@ -6,6 +6,8 @@ import 'screens/admin_dashboard.dart';
 import 'screens/user_management.dart';
 import 'screens/doctor_management.dart';
 import 'screens/medicine_management.dart';
+import 'screens/analytics_dashboard.dart';
+import 'screens/admin_management_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -173,6 +175,8 @@ class AdminPanel extends StatelessWidget {
         '/users': (context) => const UserManagement(),
         '/doctors': (context) => const DoctorManagement(),
         '/medicines': (context) => const MedicineManagement(),
+        '/analytics': (context) => const AnalyticsDashboard(),
+        '/admin-management': (context) => const AdminManagementScreen(),
         // Placeholders for future implementation
         '/stats': (context) => const Scaffold(body: Center(child: Text('Statistics'))),
         '/settings': (context) => const Scaffold(body: Center(child: Text('Settings'))),

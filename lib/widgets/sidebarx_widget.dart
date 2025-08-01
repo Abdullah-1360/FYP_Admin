@@ -169,6 +169,16 @@ class _SidebarXWidgetState extends State<SidebarXWidget> {
           onTap: () => _navigateToRoute(context, '/dashboard'),
         ),
         SidebarXItem(
+          icon: Icons.analytics,
+          label: 'Analytics',
+          onTap: () => _navigateToRoute(context, '/analytics'),
+        ),
+        SidebarXItem(
+          icon: Icons.admin_panel_settings,
+          label: 'Admin Management',
+          onTap: () => _navigateToRoute(context, '/admin-management'),
+        ),
+        SidebarXItem(
           icon: Icons.people,
           label: 'Users',
           onTap: () => _navigateToRoute(context, '/users'),
@@ -182,11 +192,6 @@ class _SidebarXWidgetState extends State<SidebarXWidget> {
           icon: Icons.medication,
           label: 'Medicines',
           onTap: () => _navigateToRoute(context, '/medicines'),
-        ),
-        SidebarXItem(
-          icon: Icons.analytics,
-          label: 'Statistics',
-          onTap: () => _navigateToRoute(context, '/stats'),
         ),
         const SidebarXItem(
           icon: Icons.settings,

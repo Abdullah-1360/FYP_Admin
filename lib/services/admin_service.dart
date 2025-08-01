@@ -66,6 +66,28 @@ class AdminService {
     }
   }
 
+  Future<void> toggleUserStatus(String userId) async {
+    try {
+      final response = await _dio.post('/admin/users/toggle-status/$userId');
+      if (response.statusCode != 200) {
+        throw Exception('Failed to toggle user status: ${response.statusMessage}');
+      }
+    } catch (e) {
+      throw Exception('Failed to toggle user status: $e');
+    }
+  }
+
+  Future<void> resetUserPassword(String userId) async {
+    try {
+      final response = await _dio.post('/admin/users/reset-password/$userId');
+      if (response.statusCode != 200) {
+        throw Exception('Failed to reset user password: ${response.statusMessage}');
+      }
+    } catch (e) {
+      throw Exception('Failed to reset user password: $e');
+    }
+  }
+
   // Doctor Management
   static Future<List<Doctor>> getAllDoctors() async {
     try {
@@ -118,6 +140,48 @@ class AdminService {
     }
   }
 
+  // Appointment Management
+  Future<List<dynamic>> getAllAppointments() async {
+    try {
+      final response = await _dio.get('/admin/appointments');
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        return data;
+      } else {
+        throw Exception('Failed to load appointments: ${response.statusMessage}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load appointments: $e');
+    }
+  }
+
+  Future<void> updateAppointmentStatus(String appointmentId, String status) async {
+    try {
+      final response = await _dio.put('/admin/appointments/$appointmentId/status', 
+          data: {'status': status});
+      
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update appointment status: ${response.statusMessage}');
+      }
+    } catch (e) {
+      throw Exception('Failed to update appointment status: $e');
+    }
+  }
+
+  Future<void> rescheduleAppointment(String appointmentId, DateTime newDateTime) async {
+    try {
+      final response = await _dio.put('/admin/appointments/$appointmentId/reschedule', 
+          data: {'appointmentDate': newDateTime.toIso8601String()});
+      
+      if (response.statusCode != 200) {
+        throw Exception('Failed to reschedule appointment: ${response.statusMessage}');
+      }
+    } catch (e) {
+      throw Exception('Failed to reschedule appointment: $e');
+    }
+  }
+
   // Medicine Management
   static Future<List<Medicine>> getAllMedicines() async {
     try {
@@ -167,6 +231,22 @@ class AdminService {
       }
     } catch (e) {
       throw Exception('Failed to delete medicine: $e');
+    }
+  }
+
+  // Sales Management
+  Future<List<dynamic>> getSalesData() async {
+    try {
+      final response = await _dio.get('/admin/sales');
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        return data;
+      } else {
+        throw Exception('Failed to load sales data: ${response.statusMessage}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load sales data: $e');
     }
   }
 

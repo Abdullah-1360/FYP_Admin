@@ -4,6 +4,8 @@ import '../utils/responsive.dart';
 import '../widgets/sidebarx_widget.dart';
 import '../widgets/dashboard_stats.dart';
 import '../widgets/dashboard_card.dart';
+import '../screens/analytics_dashboard.dart';
+import '../screens/admin_management_screen.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -115,10 +117,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => _navigate('/medicines'),
                         ),
                         DashboardCard(
-                          title: 'Statistics',
+                          title: 'Analytics Dashboard',
                           icon: Icons.analytics,
                           color: Colors.purple,
-                          onTap: () => Navigator.pushNamed(context, '/stats'),
+                          onTap: () => _navigate('/analytics'),
+                        ),
+                        DashboardCard(
+                          title: 'Admin Management',
+                          icon: Icons.admin_panel_settings,
+                          color: Colors.red,
+                          onTap: () => _navigate('/admin-management'),
                         ),
                       ],
                     ),
