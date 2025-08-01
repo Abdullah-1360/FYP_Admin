@@ -9,7 +9,6 @@ class globalvariables {
 
   // Get the appropriate base URL based on environment & platform
   String getBaseUrl() {
-
     return _production;
   }
 }
