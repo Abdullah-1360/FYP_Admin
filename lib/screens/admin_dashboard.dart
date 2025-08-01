@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sidebarx/sidebarx.dart';
 import '../utils/responsive.dart';
-import '../widgets/sidebar.dart';
+import '../widgets/sidebarx_widget.dart';
 import '../widgets/dashboard_stats.dart';
 import '../widgets/dashboard_card.dart';
 
@@ -13,6 +14,7 @@ class AdminDashboard extends StatefulWidget {
 
 class _AdminDashboardState extends State<AdminDashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _controller = SidebarXController(selectedIndex: 0, extended: false);
   Key _statsKey = UniqueKey();
 
   Future<void> _navigate(String route) async {
@@ -59,15 +61,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
           const SizedBox(width: 16),
         ],
       ),
-      drawer: Responsive.isMobile(context) ? const Sidebar() : null,
+      drawer: Responsive.isMobile(context) ? SidebarXWidget(controller: _controller) : null,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!Responsive.isMobile(context))
-            SizedBox(
-              width: Responsive.getSidebarWidth(context),
-              child: const Sidebar(),
-            ),
+            SidebarXWidget(controller: _controller),
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(24),
@@ -132,4 +131,4 @@ class _AdminDashboardState extends State<AdminDashboard> {
       ),
     );
   }
-} 
+}

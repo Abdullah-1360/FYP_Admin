@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/admin_service.dart';
-import '../widgets/user_list_item.dart';
 import '../widgets/user_card.dart';
 import '../utils/responsive.dart';
 

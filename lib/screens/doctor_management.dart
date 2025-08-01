@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/doctor_model.dart';
 import '../services/admin_service.dart';
-import '../widgets/doctor_list_item.dart';
 import '../widgets/add_doctor_dialog.dart';
 import '../widgets/doctor_card.dart';
 import '../utils/responsive.dart';
