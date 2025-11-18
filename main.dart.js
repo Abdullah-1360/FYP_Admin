@@ -8571,7 +8571,7 @@ A.aPT()
 i=$.Ms()
 h=t.N
 s=7
-return A.r(i.xN("https://x8n472ds-5000.inc1.devtunnels.ms/api/admin/auth/login",A.aF(["email",a,"password",b],h,h),t.z),$async$Nh)
+return A.r(i.xN("https://2451dv8v-5000.asse.devtunnels.ms/api/admin/auth/login",A.aF(["email",a,"password",b],h,h),t.z),$async$Nh)
 case 7:n=d
 s=n.c===200?8:9
 break
@@ -8651,7 +8651,7 @@ j===$&&A.a()
 j.p(0,"Authorization","Bearer "+A.k(n))
 A.a7e(n)
 s=8
-return A.r(k.ll(0,"https://x8n472ds-5000.inc1.devtunnels.ms/api/admin/auth/validate-token",t.z),$async$Ng)
+return A.r(k.ll(0,"https://2451dv8v-5000.asse.devtunnels.ms/api/admin/auth/validate-token",t.z),$async$Ng)
 case 8:m=b
 k=m.c===200&&J.d(J.aH(m.a,"valid"),!0)
 q=k
@@ -45301,7 +45301,7 @@ A.RW.prototype={
 gu(a){return a.length}}
 A.Wp.prototype={}
 A.a6f.prototype={
-Nu(){return"https://x8n472ds-5000.inc1.devtunnels.ms/api"}}
+Nu(){return"https://2451dv8v-5000.asse.devtunnels.ms/api"}}
 A.MV.prototype={
 H(a){var s,r,q=null,p=A.aQo(B.j,B.as,q,B.bt,B.H1,B.bt,B.j),o=A.cB(12),n=A.cB(12),m=A.cB(12)
 m=A.aMq(q,!1,new A.dE(4,o,new A.aX(B.eb,1,B.C,-1)),q,B.aj,q,q,new A.dE(4,n,new A.aX(B.eb,1,B.C,-1)),new A.dE(4,A.cB(12),B.Dt),q,q,B.kx,!0,B.hv,B.ie,q,q,new A.dE(4,m,B.Dy),new A.dE(4,A.cB(12),B.Du),q,q,q,q,q,q,!1,!1,q,q,q,q,q,q)
