@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../screens/user_management.dart';
 import '../screens/doctor_management.dart';
 import '../screens/medicine_management.dart';
+import '../screens/payment_management.dart';
 
 class AdminDrawer extends StatelessWidget {
   const AdminDrawer({super.key});
@@ -78,6 +79,17 @@ class AdminDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const MedicineManagement()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.payments),
+            title: const Text('Payment Management'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PaymentManagement()),
               );
             },
           ),

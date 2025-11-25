@@ -193,6 +193,11 @@ class _SidebarXWidgetState extends State<SidebarXWidget> {
           label: 'Medicines',
           onTap: () => _navigateToRoute(context, '/medicines'),
         ),
+        SidebarXItem(
+          icon: Icons.payments,
+          label: 'Payments',
+          onTap: () => _navigateToRoute(context, '/payments'),
+        ),
         const SidebarXItem(
           icon: Icons.settings,
           label: 'Settings',
