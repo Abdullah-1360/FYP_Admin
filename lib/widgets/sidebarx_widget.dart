@@ -198,9 +198,10 @@ class _SidebarXWidgetState extends State<SidebarXWidget> {
           label: 'Payments',
           onTap: () => _navigateToRoute(context, '/payments'),
         ),
-        const SidebarXItem(
+        SidebarXItem(
           icon: Icons.settings,
           label: 'Settings',
+          onTap: () => _navigateToRoute(context, '/settings'),
         ),
         SidebarXItem(
           icon: Icons.logout,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import '../utils/responsive.dart';
-import '../services/admin_service.dart'; // Added import for AdminService
+import '../services/admin_service.dart';
+import '../Global_variables.dart';
 
 class DashboardStats extends StatefulWidget {
   const DashboardStats({super.key});
@@ -13,6 +15,7 @@ class _DashboardStatsState extends State<DashboardStats> {
   int _totalUsers = 0;
   int _activeDoctors = 0;
   int _medicineStock = 0;
+  double _totalRevenue = 0;
   bool _loading = true;
 
   @override
@@ -26,6 +29,17 @@ class _DashboardStatsState extends State<DashboardStats> {
       final users = await AdminService.getAllUsers();
       final doctors = await AdminService.getAllDoctors();
       final medicines = await AdminService.getAllMedicines();
+      
+      // Fetch revenue from analytics
+      final dio = Dio(BaseOptions(
+        baseUrl: globalvariables().getBaseUrl(),
+        validateStatus: (status) => true,
+      ));
+      final revenueResponse = await dio.get('/analytics/summary');
+      double revenue = 0;
+      if (revenueResponse.statusCode == 200) {
+        revenue = (revenueResponse.data['totalRevenue'] ?? 0).toDouble();
+      }
 
       if (!mounted) return;
 
@@ -33,6 +47,7 @@ class _DashboardStatsState extends State<DashboardStats> {
         _totalUsers = users.length;
         _activeDoctors = doctors.length;
         _medicineStock = medicines.length;
+        _totalRevenue = revenue;
         _loading = false;
       });
     } catch (e) {
@@ -83,7 +98,7 @@ class _DashboardStatsState extends State<DashboardStats> {
         ),
         _StatCard(
           title: 'Total Revenue',
-          value: '\u0024-',
+          value: '\$${_totalRevenue.toStringAsFixed(2)}',
           icon: Icons.attach_money,
           color: Colors.purple,
           increase: '',
