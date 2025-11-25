@@ -8,7 +8,6 @@ import 'screens/medicine_management.dart';
 import 'screens/analytics_dashboard.dart';
 import 'screens/admin_management_screen.dart';
 import 'screens/payment_management.dart';
-import 'screens/settings_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -179,9 +178,9 @@ class AdminPanel extends StatelessWidget {
         '/analytics': (context) => const AnalyticsDashboard(),
         '/admin-management': (context) => const AdminManagementScreen(),
         '/payments': (context) => const PaymentManagement(),
-        '/settings': (context) => const SettingsScreen(),
         // Placeholders for future implementation
         '/stats': (context) => const Scaffold(body: Center(child: Text('Statistics'))),
+        '/settings': (context) => const Scaffold(body: Center(child: Text('Settings'))),
       },
     );
   }

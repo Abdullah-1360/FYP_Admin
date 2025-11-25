@@ -31,6 +31,27 @@ class Payment {
       email = user['email'] as String?;
       username = user['username'] as String?;
     }
+    // Fallback to flattened fields returned by backend formatter
+    email ??= json['userEmail'] as String?;
+    username ??= json['userUsername'] as String?;
+
+    // Normalize fullAddress to a readable string if backend returns an object
+    String? fullAddressStr;
+    final fa = json['fullAddress'];
+    if (fa is Map<String, dynamic>) {
+      final street = fa['street']?.toString();
+      final city = fa['city']?.toString();
+      final state = fa['state']?.toString();
+      final zip = fa['zipCode']?.toString();
+      final country = fa['country']?.toString();
+      final parts = [street, city, state, zip, country]
+          .where((e) => e != null && e!.isNotEmpty)
+          .map((e) => e!)
+          .toList();
+      fullAddressStr = parts.isNotEmpty ? parts.join(', ') : null;
+    } else {
+      fullAddressStr = fa?.toString();
+    }
     return Payment(
       id: (json['_id'] ?? json['id']).toString(),
       paymentIntentId: (json['paymentIntentId'] ?? '').toString(),
@@ -41,7 +62,7 @@ class Payment {
       userEmail: email,
       userUsername: username,
       address: (json['address'] as String?) ?? null,
-      fullAddress: (json['fullAddress'] as String?) ?? null,
+      fullAddress: fullAddressStr,
     );
   }
 }
