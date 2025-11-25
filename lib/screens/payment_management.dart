@@ -26,10 +26,12 @@ class _PaymentManagementState extends State<PaymentManagement> {
     super.dispose();
   }
 
-  void _refreshPayments() {
+  Future<void> _refreshPayments() async {
+    final future = PaymentService.getAllPayments();
     setState(() {
-      _paymentsFuture = PaymentService.getAllPayments();
+      _paymentsFuture = future;
     });
+    await future;
   }
 
   @override
@@ -79,7 +81,7 @@ class _PaymentManagementState extends State<PaymentManagement> {
                         const SizedBox(height: 16),
                         Text('Error loading payments: ${snapshot.error}', style: const TextStyle(color: Colors.red)),
                         const SizedBox(height: 16),
-                        ElevatedButton(onPressed: _refreshPayments, child: const Text('Retry')),
+                        ElevatedButton(onPressed: () => _refreshPayments(), child: const Text('Retry')),
                       ],
                     ),
                   );
@@ -87,7 +89,7 @@ class _PaymentManagementState extends State<PaymentManagement> {
 
                 final payments = snapshot.data ?? [];
                 final filtered = payments.where((p) {
-                  final searchStr = '${p.userUsername ?? ''}${p.userEmail ?? ''}${p.paymentIntentId}'.toLowerCase();
+                  final searchStr = '${p.userUsername ?? ''}${p.userEmail ?? ''}${p.userName ?? ''}${p.paymentIntentId}'.toLowerCase();
                   return searchStr.contains(_searchQuery);
                 }).toList();
                 if (filtered.isEmpty) {
@@ -95,7 +97,7 @@ class _PaymentManagementState extends State<PaymentManagement> {
                 }
 
                 return RefreshIndicator(
-                  onRefresh: () async => _refreshPayments(),
+                  onRefresh: () => _refreshPayments(),
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: filtered.length,
@@ -104,52 +106,111 @@ class _PaymentManagementState extends State<PaymentManagement> {
                       final p = filtered[index];
                       return Card(
                         elevation: 2,
-                        child: ListTile(
-                          leading: CircleAvatar(child: Text(p.currency.toUpperCase())),
-                          title: Text('${p.amount.toStringAsFixed(2)} ${p.currency} • ${p.status}'),
-                          subtitle: Text(
-                            'User: ${p.userUsername ?? p.userEmail ?? 'Unknown'}\n'
-                            'Intent: ${p.paymentIntentId}\n'
-                            'Address: ${(p.fullAddress ?? p.address ?? 'N/A').toString()}'
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${p.createdAt.toLocal()}'.split('.').first),
-                              const SizedBox(width: 12),
-                              IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text('Delete Payment'),
-                                      content: const Text('Are you sure you want to delete this payment?'),
-                                      actions: [
-                                        TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-                                        TextButton(onPressed: () => Navigator.pop(context, true), style: TextButton.styleFrom(foregroundColor: Colors.red), child: const Text('Delete')),
+                              ListTile(
+                                leading: CircleAvatar(child: Text(p.currency.toUpperCase())),
+                                title: Text('${p.amount.toStringAsFixed(2)} ${p.currency} • ${p.status}'),
+                                subtitle: Text(
+                                  'User: ${p.userName ?? p.userUsername ?? p.userEmail ?? 'Unknown'}\n'
+                                  'Intent: ${p.paymentIntentId}\n'
+                                  'Address: ${(p.fullAddress ?? p.address ?? 'N/A').toString()}'
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('${p.createdAt.toLocal()}'.split('.').first),
+                                    const SizedBox(width: 12),
+                                    PopupMenuButton<String>(
+                                      onSelected: (value) async {
+                                        try {
+                                          await PaymentService.updatePaymentStatus(p.id, value);
+                                          await _refreshPayments();
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text('Status updated to $value'), backgroundColor: Colors.green),
+                                            );
+                                          }
+                                        } catch (e) {
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                                            );
+                                          }
+                                        }
+                                      },
+                                      itemBuilder: (context) => const [
+                                        PopupMenuItem(value: 'pending', child: Text('Mark Pending')),
+                                        PopupMenuItem(value: 'succeeded', child: Text('Mark Succeeded')),
+                                        PopupMenuItem(value: 'failed', child: Text('Mark Failed')),
+                                        PopupMenuItem(value: 'cancelled', child: Text('Mark Cancelled')),
                                       ],
                                     ),
-                                  );
-                                  if (confirm == true) {
-                                    try {
-                                      await PaymentService.deletePayment(p.id);
-                                      _refreshPayments();
-                                      if (mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Payment deleted'), backgroundColor: Colors.green),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () async {
+                                        final confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text('Delete Payment'),
+                                            content: const Text('Are you sure you want to delete this payment?'),
+                                            actions: [
+                                              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                                              TextButton(onPressed: () => Navigator.pop(context, true), style: TextButton.styleFrom(foregroundColor: Colors.red), child: const Text('Delete')),
+                                            ],
+                                          ),
                                         );
-                                      }
-                                    } catch (e) {
-                                      if (mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-                                        );
-                                      }
-                                    }
-                                  }
-                                },
+                                        if (confirm == true) {
+                                          try {
+                                            await PaymentService.deletePayment(p.id);
+                                            await _refreshPayments();
+                                            if (mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(content: Text('Payment deleted'), backgroundColor: Colors.green),
+                                              );
+                                            }
+                                          } catch (e) {
+                                            if (mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                                              );
+                                            }
+                                          }
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
+                              if (p.items.isNotEmpty) ...[
+                                const Divider(height: 1),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  child: Text('Items (${p.items.length})'),
+                                ),
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: p.items.length,
+                                  itemBuilder: (context, idx) {
+                                    final it = p.items[idx];
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(child: Text(it.medicineName.isEmpty ? 'Item' : it.medicineName)),
+                                          Text('x${it.quantity}'),
+                                          Text('${it.price.toStringAsFixed(2)} ${p.currency.toUpperCase()}'),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ],
                           ),
                         ),
