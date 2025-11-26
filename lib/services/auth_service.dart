@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../Global_variables.dart';
 import 'admin_service.dart';
 import 'payment_service.dart';
+import 'analytics_service.dart';
 
 class AuthService {
   static final Dio _dio = Dio(BaseOptions(
@@ -95,6 +96,7 @@ class AuthService {
         // Propagate token to other services
         AdminService.setAuthToken(token);
         PaymentService.setAuthToken(token);
+        AnalyticsService.setAuthToken(token);
         return true;
       }
 
@@ -127,6 +129,7 @@ class AuthService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       AdminService.setAuthToken(token);
       PaymentService.setAuthToken(token);
+      AnalyticsService.setAuthToken(token);
       
       final response = await _dio.get('${globalvariables().getBaseUrl()}/admin/auth/validate-token');
 
@@ -151,6 +154,8 @@ class AuthService {
     if (token != null) {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       AdminService.setAuthToken(token);
+      PaymentService.setAuthToken(token);
+      AnalyticsService.setAuthToken(token);
     }
   }
 

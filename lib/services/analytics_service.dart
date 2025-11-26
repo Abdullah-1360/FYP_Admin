@@ -135,4 +135,12 @@ class AnalyticsService {
       throw Exception('Failed to load dashboard summary: $e');
     }
   }
+
+  static void setAuthToken(String token) {
+    if (token.isEmpty) {
+      _dio.options.headers.remove('Authorization');
+    } else {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+    }
+  }
 }

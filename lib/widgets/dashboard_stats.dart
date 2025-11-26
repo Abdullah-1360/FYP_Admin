@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import '../utils/responsive.dart';
-import '../services/admin_service.dart'; // Added import for AdminService
+import '../services/admin_service.dart';
+import '../services/analytics_service.dart';
 
 class DashboardStats extends StatefulWidget {
   const DashboardStats({super.key});
@@ -13,12 +15,16 @@ class _DashboardStatsState extends State<DashboardStats> {
   int _totalUsers = 0;
   int _activeDoctors = 0;
   int _medicineStock = 0;
+  double _totalRevenue = 0.0;
   bool _loading = true;
+  Timer? _revenueTimer;
 
   @override
   void initState() {
     super.initState();
     _fetchStats();
+    _fetchRevenue();
+    _startRevenuePolling();
   }
 
   Future<void> _fetchStats() async {
@@ -38,8 +44,32 @@ class _DashboardStatsState extends State<DashboardStats> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      // Optionally handle error UI
     }
+  }
+
+  Future<void> _fetchRevenue() async {
+    try {
+      final summary = await AnalyticsService.getDashboardSummary();
+      if (!mounted) return;
+      setState(() {
+        _totalRevenue = summary.totalRevenue;
+      });
+    } catch (_) {
+      if (!mounted) return;
+    }
+  }
+
+  void _startRevenuePolling() {
+    _revenueTimer?.cancel();
+    _revenueTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      _fetchRevenue();
+    });
+  }
+
+  @override
+  void dispose() {
+    _revenueTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -83,7 +113,7 @@ class _DashboardStatsState extends State<DashboardStats> {
         ),
         _StatCard(
           title: 'Total Revenue',
-          value: '\u0024-',
+          value: '\u0024${_totalRevenue.toStringAsFixed(0)}',
           icon: Icons.attach_money,
           color: Colors.purple,
           increase: '',
